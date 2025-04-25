@@ -3,23 +3,13 @@
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Features](#features)
-  - [User Roles](#user-roles)
-  - [Key Functionalities](#key-functionalities)
 - [Technology Stack](#technology-stack)
 - [Screenshots](#screenshots)
 - [Project Structure](#project-structure)
-- [Database Schema](#database-schema)
 - [Hibernate Integration](#hibernate-integration)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setup Instructions](#setup-instructions)
-  - [Default Users](#default-users)
 - [Implementation Highlights](#implementation-highlights)
-  - [DAO Pattern Implementation](#dao-pattern-implementation)
-  - [Session-Based Authentication](#session-based-authentication)
-  - [JPA Entity Relationships](#jpa-entity-relationships)
 - [Future Enhancements](#future-enhancements)
-- [Acknowledgments](#acknowledgments)
 
 ## Project Overview
 
@@ -68,50 +58,138 @@ EventHub implements a multi-role authorization system with three types of users:
 
 ## Screenshots
 
-### User Authentication
-![Login Page](screenshots/login_page.png)
-*Figure 1: Login page with role selection*
+### User Experience Journey
 
-![Registration Page](screenshots/registration_page.png)
-*Figure 2: User registration form*
+<div align="center">
 
-### Administrator Dashboard
-![Admin Dashboard](screenshots/admin_dashboard.png)
-*Figure 3: Administrator dashboard overview*
+#### 🔐 Authentication
+<table>
+  <tr>
+    <td width="50%"><img src="images/login.png" alt="Login Interface" style="border-radius: 10px"/></td>
+    <td width="50%"><img src="images/register.png" alt="Registration Form" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td><em>Streamlined login with role selection</em></td>
+    <td><em>Intuitive registration process</em></td>
+  </tr>
+</table>
 
-![Admin Event Management](screenshots/admin_events.png)
-*Figure 4: Admin event management interface*
+#### 👑 Administrator Experience
+<table>
+  <tr>
+    <td colspan="2"><img src="images/admin_dashboard.png" alt="Admin Dashboard" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td colspan="2"><em>Comprehensive administrative dashboard for platform oversight</em></td>
+  </tr>
+  <tr>
+    <td><img src="images/admin_customers.png" alt="Customer Management" style="border-radius: 10px"/></td>
+    <td><img src="images/admin_organizers.png" alt="Organizer Management" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td><em>Customer management and monitoring</em></td>
+    <td><em>Organizer approval and management</em></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="images/admin_events.png" alt="Event Administration" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td colspan="2"><em>Platform-wide event moderation capabilities</em></td>
+  </tr>
+</table>
 
-### Organizer Features
-![Organizer Dashboard](screenshots/organizer_dashboard.png)
-*Figure 5: Organizer dashboard showing upcoming events*
+#### 🎭 Organizer Portal
+<table>
+  <tr>
+    <td width="50%"><img src="images/organizer_dashboard.png" alt="Organizer Dashboard" style="border-radius: 10px"/></td>
+    <td width="50%"><img src="images/organizer_events.png" alt="Event Management" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td><em>Analytics-driven dashboard for event creators</em></td>
+    <td><em>Comprehensive event management tools</em></td>
+  </tr>
+  <tr>
+    <td><img src="images/organizer_create.png" alt="Event Creation" style="border-radius: 10px"/></td>
+    <td><img src="images/event_participant.png" alt="Participant Management" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td><em>Intuitive event creation interface</em></td>
+    <td><em>Attendee tracking and management</em></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="images/organizer_profile.png" alt="Organizer Profile" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td colspan="2"><em>Organizer profile customization</em></td>
+  </tr>
+</table>
 
-![Event Creation](screenshots/create_event.png)
-*Figure 6: Event creation form*
+#### 🧑‍💼 Customer Experience
+<table>
+  <tr>
+    <td colspan="2"><img src="images/customer_dashboard.png" alt="Customer Dashboard" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td colspan="2"><em>Personalized customer dashboard highlighting upcoming events</em></td>
+  </tr>
+  <tr>
+    <td><img src="images/customer_browse.png" alt="Event Discovery" style="border-radius: 10px"/></td>
+    <td><img src="images/customer_registrations.png" alt="Registration Management" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td><em>Event discovery with filtering and search</em></td>
+    <td><em>Registration tracking and management</em></td>
+  </tr>
+  <tr>
+    <td><img src="images/customer_register.png" alt="Event Registration" style="border-radius: 10px"/></td>
+    <td><img src="images/customer_unregister.png" alt="Registration Cancellation" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td><em>Seamless event registration process</em></td>
+    <td><em>Hassle-free registration cancellation</em></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="images/customer_profile.png" alt="Customer Profile" style="border-radius: 10px"/></td>
+  </tr>
+  <tr>
+    <td colspan="2"><em>User profile management and preferences</em></td>
+  </tr>
+</table>
 
-### Customer Interface
-![Event Browsing](screenshots/customer_events.png)
-*Figure 7: Event browsing page with pagination*
+</div>
 
-![Event Details](screenshots/event_details.png)
-*Figure 8: Detailed event view with registration option*
 
 ## Project Structure
 
 The application follows a standard layered architecture:
 
+![Project Structure](images/program_structure.png)
 
+The project is organized as follows:
 
-## Database Schema
+1. **Controllers Layer**: Handles HTTP requests and manages user interaction flow
+   - AdminController: Manages administrative tasks
+   - HomeController: Handles authentication and common pages
+   - OrganizerController: Manages event creation and organizer functions
+   - CustomerController: Manages event browsing and registration
 
-The system uses the following main entities:
-- User (abstract class extended by Customer and Organizer)
-- Admin
-- Event
-- Relationships between entities (e.g., User-Event registrations)
+2. **DAO Layer**: Implements Data Access Object pattern
+   - Abstract DAO base class with common methods
+   - Specialized DAOs for each entity (AdminDAO, EventDAO, etc.)
+   - Uses Hibernate/JPA for database operations
 
-![Database Schema](screenshots/db_schema.png)
-*Figure 9: Entity-Relationship diagram of the database schema*
+3. **POJOs Layer**: Plain Old Java Objects representing domain entities
+   - User (abstract base class)
+   - Admin, Organizer, Customer (extend User)
+   - Event with relationships to other entities
+
+4. **Validators**: Form validation for data integrity
+   - Validates user input before processing
+
+5. **Configuration**: System setup and initialization
+   - DataInitializer for sample data generation
+
+This structure provides clear separation of concerns, making the codebase maintainable and extensible.
 
 ## Hibernate Integration
 
@@ -252,7 +330,3 @@ Several areas for future development have been identified:
 * Customizable event pages for organizers
 
 These enhancements would transform EventHub from a course project into a production-ready system capable of serving real-world event management needs.
-
-## Acknowledgments
-
-This project was developed as part of the [Course Name] at [University/Institution Name]. Special thanks to [Professor/Instructor Name] for guidance during the development process.
