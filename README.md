@@ -1,19 +1,21 @@
-# EventHub - Event Management System
+# EventHub - Containerized Event Management System
 
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
+- [Deployment Architecture](#deployment-architecture)
 - [Screenshots](#screenshots)
 - [Project Structure](#project-structure)
-- [Hibernate Integration](#hibernate-integration)
+- [ORM Implementation](#orm-implementation)
 - [Getting Started](#getting-started)
 - [Implementation Highlights](#implementation-highlights)
+- [DevOps Practices](#devops-practices)
 - [Future Enhancements](#future-enhancements)
 
 ## Project Overview
 
-EventHub is a comprehensive event management platform developed as a course project. This system allows organizations to create events, users to register for these events, and administrators to maintain the overall platform. Built on the Spring Boot framework with Hibernate ORM, EventHub demonstrates the implementation of a robust web application using Java technologies.
+EventHub is a comprehensive event management platform developed as a course project and enhanced with industry-standard containerization practices. This system allows organizations to create events, users to register for these events, and administrators to maintain the overall platform. Built on the Spring Boot framework with Hibernate ORM, EventHub demonstrates the implementation of a robust, containerized web application using modern Java technologies and DevOps principles.
 
 ## Features
 
@@ -44,17 +46,99 @@ EventHub implements a multi-role authorization system with three types of users:
 - **Registration System**: Customers can register for events with capacity limits
 - **Search & Filter**: Find events by keyword or category
 - **Responsive UI**: Bootstrap-based interface that works across devices
-- **Data Persistence**: Hibernate ORM with SQL Server database
+- **Data Persistence**: Hibernate ORM with MySQL database
 - **Pagination**: Efficient display of event lists with page navigation
+- **Containerization**: Full Docker support for consistent deployment across environments
 
 ## Technology Stack
 
-- **Backend**: Java with Spring Boot framework
+- **Backend**: Java 21 with Spring Boot framework
 - **Frontend**: JSP, HTML, CSS, JavaScript
-- **Database**: Microsoft SQL Server
+- **Database**: MySQL 8.0.36
 - **ORM**: Hibernate
 - **Build Tool**: Maven
+- **Containerization**: Docker & Docker Compose
 - **Design Pattern**: DAO pattern for data access
+- **Time Management**: Configured timezone handling for global deployment
+
+## Deployment Architecture
+
+EventHub utilizes a modern containerized architecture, allowing for seamless deployment across different environments.
+
+```
+┌─────────────────────────────────────┐
+│          Docker Environment         │
+│                                     │
+│  ┌─────────────┐     ┌───────────┐  │
+│  │             │     │           │  │
+│  │  Spring Boot│     │  MySQL    │  │
+│  │  Application│─────│  Database │  │
+│  │  Container  │     │  Container│  │
+│  │             │     │           │  │
+│  └─────────────┘     └───────────┘  │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### Docker Configuration
+
+The project includes a complete Docker setup for streamlined deployment:
+
+#### Dockerfile
+```dockerfile
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+COPY target/EventHub-0.0.1-SNAPSHOT.war app.war
+
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.war"]
+```
+
+#### Docker Compose
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/eventhub?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Aa@8573547512
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+    depends_on:
+      - db
+    networks:
+      - eventhub-network
+
+  db:
+    image: mysql:8.0.36
+    environment:
+      - MYSQL_ROOT_PASSWORD=Aa@8573547512
+      - MYSQL_DATABASE=eventhub
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - eventhub-network
+
+networks:
+  eventhub-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+```
 
 ## Screenshots
 
@@ -188,27 +272,28 @@ The project is organized as follows:
 
 5. **Configuration**: System setup and initialization
    - DataInitializer for sample data generation
+   - Environment-specific property configurations
 
 This structure provides clear separation of concerns, making the codebase maintainable and extensible.
 
-## Hibernate Integration
+## ORM Implementation
 
-EventHub utilizes Hibernate ORM for database operations, providing an abstraction layer between the application and the database. This integration offers several advantages:
+EventHub utilizes Hibernate ORM for database operations, providing an abstraction layer between the application and the database. This implementation supports database portability as demonstrated by the migration from SQL Server to MySQL.
 
 ### Configuration
 
-The application connects to Microsoft SQL Server through Hibernate, configured in `application.properties`:
+The application connects to MySQL through Hibernate, configured in `application.properties`:
 
 ```properties
 # DataSource Configuration
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=EventHub;encrypt=true;trustServerCertificate=true
-spring.datasource.username=sa
+spring.datasource.url=jdbc:mysql://localhost:3306/eventhub?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+spring.datasource.username=root
 spring.datasource.password=******
-spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 # Hibernate Configuration
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
@@ -218,11 +303,26 @@ spring.jpa.properties.hibernate.format_sql=true
 
 ### Prerequisites
 
-- JDK 17 or higher
-- Maven
-- Microsoft SQL Server
+- Docker and Docker Compose
+- JDK 21 or higher (for development only)
+- Maven (for development only)
 
 ### Setup Instructions
+
+#### With Docker (Recommended)
+
+1. Clone the repository
+2. Build the application with Maven:
+   ```
+   mvn clean package
+   ```
+3. Launch the containerized application:
+   ```
+   docker-compose up -d
+   ```
+4. Access the application at `http://localhost:8080/eventhub`
+
+#### For Development
 
 1. Clone the repository
 2. Configure database connection in `application.properties`
@@ -257,10 +357,10 @@ This approach offers better maintainability and testability.
 // Example of DAO interface
 public interface EventDAO {
     Event save(Event event);
-    Optional findById(Long id);
-    List findAll();
-    List findByCategory(String category);
-    List searchByKeyword(String keyword);
+    Optional<Event> findById(Long id);
+    List<Event> findAll();
+    List<Event> findByCategory(String category);
+    List<Event> searchByKeyword(String keyword);
     // Other methods...
 }
 ```
@@ -296,9 +396,32 @@ The system demonstrates various JPA relationship mappings:
     joinColumns = @JoinColumn(name = "customer_id"),
     inverseJoinColumns = @JoinColumn(name = "event_id")
 )
-private Set registeredEvents = new HashSet<>();
+private Set<Event> registeredEvents = new HashSet<>();
 ```
 
+## DevOps Practices
+
+This project demonstrates several DevOps principles and best practices:
+
+### Containerization
+
+- **Platform Independence**: Application runs consistently across any environment with Docker support
+- **Isolation**: System dependencies are encapsulated within containers
+- **Resource Management**: Container-specific resource allocation and management
+- **Easy Deployment**: Single command deployment with docker-compose
+
+### Database Migration
+
+- **Database Portability**: Successfully migrated from Microsoft SQL Server to MySQL
+- **Dialect Configuration**: Automated adjustment of SQL dialect through Hibernate
+- **Schema Management**: Auto-generating database schema regardless of database provider
+
+### Environment Configuration
+
+- **Externalized Configuration**: Environment variables for sensitive information
+- **Service Discovery**: Container networking with automatic service discovery
+- **Timezone Management**: Proper handling of timezone configuration
+- **Volume Persistence**: Database data persists through container restarts
 
 ## Future Enhancements
 
@@ -308,6 +431,7 @@ Several areas for future development have been identified:
 * Implementation of Spring Security for more robust authentication
 * Password encryption with bcrypt or similar algorithms
 * Role-based access control with more granular permissions
+* HTTPS configuration with SSL certificates
 
 ### Feature Expansions
 * Email notifications for event reminders and updates
@@ -320,8 +444,9 @@ Several areas for future development have been identified:
 * RESTful API for mobile application integration
 * Implementation of caching for frequently accessed data
 * Comprehensive unit and integration test suite
-* Deployment to cloud platforms (AWS, Azure, etc.)
-* Performance optimization for higher scalability
+* CI/CD pipeline integration (GitHub Actions, Jenkins)
+* Infrastructure as Code using Terraform or similar tools
+* Kubernetes orchestration for enhanced scalability
 
 ### User Experience
 * Advanced search filters (location, date range, price)
