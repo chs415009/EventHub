@@ -2,6 +2,7 @@ package com.mycompany.EventHub.DAOImpl;
 
 import com.mycompany.EventHub.DAO.DAO;
 import com.mycompany.EventHub.DAO.OrganizerDAO;
+import com.mycompany.EventHub.POJOs.Event;
 import com.mycompany.EventHub.POJOs.Organizer;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -101,6 +102,24 @@ public class OrganizerDAOImpl extends DAO implements OrganizerDAO {
         Root<Organizer> root = query.from(Organizer.class);
         
         query.select(cb.count(root)).where(cb.equal(root.get("username"), username));
+        
+        Long count = session.createQuery(query).getSingleResult();
+        
+        return count > 0;
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasEvents(Long id) {
+        Session session = getSession();
+        
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Event> root = query.from(Event.class);
+        
+        Organizer organizer = this.findById(id).get();
+        
+        query.select(cb.count(root)).where(cb.equal(root.get("organizer"), organizer));
         
         Long count = session.createQuery(query).getSingleResult();
         

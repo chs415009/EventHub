@@ -30,6 +30,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </c:if>
+		<c:if test="${not empty error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ${error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
 
         <div class="row mb-3">
             <div class="col">

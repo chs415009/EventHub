@@ -196,9 +196,19 @@ public class AdminController {
         if (!isAdmin(session)) {
             return "redirect:/";
         }
+        System.out.println("here");
         
-        organizerDAO.deleteById(id);
-        redirectAttributes.addFlashAttribute("success", "Organizer deleted successfully");       
+        if(!organizerDAO.hasEvents(id)) {
+        	System.out.println("1111");
+        	organizerDAO.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Organizer deleted successfully");
+        }
+        else {
+        	System.out.println("2222");
+        	redirectAttributes.addFlashAttribute("error", "Cannot delete organizers who own an event.");
+        }
+        
+               
         return "redirect:/admin/organizers";
     }
     
@@ -272,9 +282,14 @@ public class AdminController {
             return "redirect:/";
         }
         
-        eventDAO.deleteById(id);
-        redirectAttributes.addFlashAttribute("success", "Event deleted successfully");
-        
+        if(eventDAO.countRegisteredCustomers(id) == 0) {
+        	eventDAO.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Event deleted successfully");
+        }
+        else {
+        	redirectAttributes.addFlashAttribute("error", "Cannot delete events that have registrations");
+        }
+               
         return "redirect:/admin/events";
     }
 }

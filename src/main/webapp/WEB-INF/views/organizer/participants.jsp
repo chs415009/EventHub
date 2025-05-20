@@ -102,7 +102,6 @@
                                             <th>Username</th>
                                             <th>Full Name</th>
                                             <th>Email</th>
-                                            <th>Age</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -112,7 +111,6 @@
                                                 <td>${participant.username}</td>
                                                 <td>${participant.fullName}</td>
                                                 <td>${participant.email}</td>
-                                                <td>${participant.age}</td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/eventhub?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Aa@8573547512
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+    depends_on:
+      - db
+    networks:
+      - eventhub-network
+
+  db:
+    image: mysql:8.0.36
+    environment:
+      - MYSQL_ROOT_PASSWORD=Aa@8573547512
+      - MYSQL_DATABASE=eventhub
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - eventhub-network
+
+networks:
+  eventhub-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

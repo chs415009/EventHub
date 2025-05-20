@@ -205,8 +205,14 @@ public class OrganizerController {
             return "redirect:/organizer/events";
         }
         
-        eventDAO.deleteById(id);
-        redirectAttributes.addFlashAttribute("success", "Event deleted successfully");       
+        if(eventDAO.countRegisteredCustomers(id) == 0) {
+        	eventDAO.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Event deleted successfully"); 
+        }
+        else {
+        	redirectAttributes.addFlashAttribute("error", "Cannot delete events that have been registered");
+        }
+                      
         return "redirect:/organizer/events";
     }
     

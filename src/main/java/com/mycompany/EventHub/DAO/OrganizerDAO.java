@@ -18,5 +18,7 @@ public interface OrganizerDAO {
         
     boolean existsByUsername(String username);
     
+    boolean hasEvents(Long id);
+    
     void deleteById(Long id);
 }

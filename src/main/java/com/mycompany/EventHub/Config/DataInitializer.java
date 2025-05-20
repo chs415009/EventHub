@@ -110,12 +110,15 @@ public class DataInitializer {
                 customer1.registerEvent(event7);
                 customer1.registerEvent(event8);
                 customer1.registerEvent(event9);
+                customer1.registerEvent(event13);
                 
                 customer2.registerEvent(event3);
                 customer2.registerEvent(event4);
+                customer2.registerEvent(event13);
                 
                 customer3.registerEvent(event5);
                 customer3.registerEvent(event6);
+                customer3.registerEvent(event13);
                 
                 customerDAO.save(customer1);
                 customerDAO.save(customer2);
