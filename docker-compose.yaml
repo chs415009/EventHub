@@ -30,7 +30,7 @@ services:
 
 networks:
   eventhub-network:
-    driver: bridge
+    name: eventhub
 
 volumes:
   mysql-data:
