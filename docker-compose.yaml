@@ -31,7 +31,6 @@ services:
 
 networks:
   eventhub-network:
-    driver: bridge
 
 volumes:
   mysql-data:
