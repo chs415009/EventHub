@@ -82,23 +82,7 @@ EventHub utilizes a modern containerized architecture, allowing for seamless dep
 
 ### Docker Configuration
 
-The project includes a complete Docker setup for streamlined deployment:
-
-#### Dockerfile
-```dockerfile
-FROM eclipse-temurin:21-jre
-
-WORKDIR /app
-
-COPY target/EventHub-0.0.1-SNAPSHOT.war app.war
-
-ENV TZ=America/New_York
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.war"]
-```
+The project can be easily deployed using the pre-built Docker image and Docker Compose:
 
 #### Docker Compose
 ```yaml
@@ -106,13 +90,13 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: chs0514/eventhub:latest
     ports:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/eventhub?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=Aa@8573547512
+      - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
     depends_on:
@@ -123,7 +107,7 @@ services:
   db:
     image: mysql:8.0.36
     environment:
-      - MYSQL_ROOT_PASSWORD=Aa@8573547512
+      - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=eventhub
     ports:
       - "3306:3306"
@@ -304,33 +288,31 @@ spring.jpa.properties.hibernate.format_sql=true
 ### Prerequisites
 
 - Docker and Docker Compose
-- JDK 21 or higher (for development only)
-- Maven (for development only)
 
 ### Setup Instructions
 
-#### With Docker (Recommended)
+#### Using Pre-built Docker Image (Recommended)
 
-1. Clone the repository
-2. Build the application with Maven:
-   ```
-   mvn clean package
-   ```
-3. Launch the containerized application:
+1. Create a new file named `docker-compose.yml` and copy the Docker Compose configuration provided above
+2. Launch the containerized application:
    ```
    docker-compose up -d
    ```
-4. Access the application at `http://localhost:8080/eventhub`
+3. Access the application at `http://localhost:8080/eventhub`
 
 #### For Development
 
 1. Clone the repository
 2. Configure database connection in `application.properties`
-3. Run the application using Spring Boot:
+3. Build the application with Maven:
+   ```
+   mvn clean package
+   ```
+4. Run the application using Spring Boot:
    ```
    mvn spring-boot:run
    ```
-4. Access the application at `http://localhost:8080/eventhub`
+5. Access the application at `http://localhost:8080/eventhub`
 
 ### Default Users
 
@@ -409,6 +391,7 @@ This project demonstrates several DevOps principles and best practices:
 - **Isolation**: System dependencies are encapsulated within containers
 - **Resource Management**: Container-specific resource allocation and management
 - **Easy Deployment**: Single command deployment with docker-compose
+- **Pre-built Images**: Deployment using pre-built Docker images from DockerHub
 
 ### Database Migration
 
