@@ -13,6 +13,7 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
     depends_on:
       - db
+    restart: on-failure:3
     networks:
       - eventhub-network
 
@@ -30,7 +31,7 @@ services:
 
 networks:
   eventhub-network:
-    name: eventhub
+    driver: bridge
 
 volumes:
   mysql-data:
