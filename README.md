@@ -13,7 +13,7 @@
 - [DevOps Practices](#devops-practices)
 - [Future Enhancements](#future-enhancements)
 
-## Project Overview
+## Project Overview 
 
 EventHub is a comprehensive event management platform developed as a course project and enhanced with industry-standard containerization practices. This system allows organizations to create events, users to register for these events, and administrators to maintain the overall platform. Built on the Spring Boot framework with Hibernate ORM, EventHub demonstrates the implementation of a robust, containerized web application using modern Java technologies and DevOps principles.
 
